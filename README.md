@@ -1,0 +1,3 @@
+<p>
+A Lissajous curve, also known as Lissajous figure or Bowditch curve, is the graph of a system of parametric equations which describe the superposition of two perpendicular oscillations in x and y directions of different angular frequency. Such motions may be considered as a particular of kind of complex harmonic motion. <a href="https://en.wikipedia.org/wiki/Lissajous_curve">(WikiPedia)</a>
+</p>
