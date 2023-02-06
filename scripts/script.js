@@ -4,6 +4,7 @@ const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
 
 const curves = new Array()
+const increment = 0.025
 const highRadius = 30
 const lowRadius = 5
 const padding = 20
@@ -39,95 +40,112 @@ function draw() {
     context.globalAlpha = 1.00
     context.closePath()
 
-    for (let column = 0; column < columns; column++) {
+    let max1 = columns > rows ? columns : rows
+    let max2 = columns < rows ? columns : rows
+
+    for (let index = 0; index < max1; index++) {
         
-        context.beginPath()
-        context.strokeStyle = '#fff'
-        context.lineWidth = 1.0
-        context.arc(x + 2 * highRadius * (column + 1) + padding * (column + 1), y, highRadius, 0, 2 * Math.PI)
-        context.stroke()
-        context.closePath()
-        
-        context.beginPath()
-        context.fillStyle = '#fff'
-        context.arc(x + 2 * highRadius * (column + 1) + padding * (column + 1) + highRadius * Math.cos(angle * (column + 1)), y + highRadius * Math.sin(angle * (column + 1)), lowRadius, 0, 2 * Math.PI)
-        context.fill()
-        context.closePath()
+        if (max1 == columns) {
+            drawColumn(index)
+        } else {
+            drawRows(index)
+        }
 
-        context.beginPath()
-        context.strokeStyle = 'rgba(255, 255, 255, 0.25)'
-        context.moveTo(x + 2 * highRadius * (column + 1) + padding * (column + 1) + highRadius * Math.cos(angle * (column + 1)), 0)
-        context.lineTo(x + 2 * highRadius * (column + 1) + padding * (column + 1) + highRadius * Math.cos(angle * (column + 1)), canvas.height)
-        context.stroke()
-        context.closePath()
-
-    }
-
-    for (let row = 0; row < rows; row++) {
-        
-        context.beginPath()
-        context.strokeStyle = '#fff'
-        context.lineWidth = 1.0
-        context.arc(x, y + 2 * highRadius * (row + 1) + padding * (row + 1), highRadius, 0, 2 * Math.PI)
-        context.stroke()
-        context.closePath()
-        
-        context.beginPath()
-        context.fillStyle = '#fff'
-        context.arc(x + highRadius * Math.cos(angle * (row + 1)), y + 2 * highRadius * (row + 1) + padding * (row + 1) + highRadius * Math.sin(angle * (row + 1)), lowRadius, 0, 2 * Math.PI)
-        context.fill()
-        context.closePath()
-        
-        context.beginPath()
-        context.strokeStyle = 'rgba(255, 255, 255, 0.25)'
-        context.moveTo(0, y + 2 * highRadius * (row + 1) + padding * (row + 1) + highRadius * Math.sin(angle * (row + 1)))
-        context.lineTo(canvas.width, y + 2 * highRadius * (row + 1) + padding * (row + 1) + highRadius * Math.sin(angle * (row + 1)))
-        context.stroke()
-        context.closePath()
-
-    }
-
-    for (let column = 0; column < columns; column++) {
-
-        for (let row = 0; row < rows; row++) {
-
-            const curve = curves[column][row]
-            curve.add(
-                2 * highRadius * (column + 1) + padding * (column + 1) + highRadius * Math.cos(angle * (column + 1)), 
-                2 * highRadius * (row + 1) + padding * (row + 1) + highRadius * Math.sin(angle * (row + 1)), lowRadius, 0, 2 * Math.PI
-            )
-
-            context.beginPath()
-            context.fillStyle = '#fff'
-            context.arc(
-                x + 2 * highRadius * (column + 1) + padding * (column + 1) + highRadius * Math.cos(angle * (column + 1)), 
-                y + 2 * highRadius * (row + 1) + padding * (row + 1) + highRadius * Math.sin(angle * (row + 1)), lowRadius / 1.5, 0, 2 * Math.PI
-            )
-            context.fill()
-            context.closePath()
-            
-            context.beginPath()
-            context.strokeStyle = '#fff'
-            context.globalAlpha = 0.50
-            context.lineWidth = 1
-            context.moveTo(x + curve.points[0].x, y + curve.points[0].y)
-            
-            for (let point of curve.points) {
-                context.lineTo(point.x + x, point.y + y)
-                context.moveTo(point.x + x, point.y + y)
+        if (index < max2) {
+            if (max2 == rows) {
+                drawRows(index)
+            } else {
+                drawColumn(index)
             }
-
-            context.stroke()
-            context.globalAlpha = 1.00
-            context.closePath()
-
         }
 
     }
 
-    angle = angle + 0.025
+    angle += increment
     requestAnimationFrame(draw)
 
+
+}
+
+function drawColumn(column) {
+
+    context.beginPath()
+    context.strokeStyle = '#fff'
+    context.lineWidth = 1.0
+    context.arc(x + 2 * highRadius * (column + 1) + padding * (column + 1), y, highRadius, 0, 2 * Math.PI)
+    context.stroke()
+    context.closePath()
+    
+    context.beginPath()
+    context.fillStyle = '#fff'
+    context.arc(x + 2 * highRadius * (column + 1) + padding * (column + 1) + highRadius * Math.cos(angle * (column + 1)), y + highRadius * Math.sin(angle * (column + 1)), lowRadius, 0, 2 * Math.PI)
+    context.fill()
+    context.closePath()
+
+    context.beginPath()
+    context.strokeStyle = 'rgba(255, 255, 255, 0.25)'
+    context.moveTo(x + 2 * highRadius * (column + 1) + padding * (column + 1) + highRadius * Math.cos(angle * (column + 1)), 0)
+    context.lineTo(x + 2 * highRadius * (column + 1) + padding * (column + 1) + highRadius * Math.cos(angle * (column + 1)), canvas.height)
+    context.stroke()
+    context.closePath()
+
+    for (let row = 0; row < rows; row++) {
+
+        const curve = curves[column][row]
+        curve.add(
+            2 * highRadius * (column + 1) + padding * (column + 1) + highRadius * Math.cos(angle * (column + 1)), 
+            2 * highRadius * (row + 1) + padding * (row + 1) + highRadius * Math.sin(angle * (row + 1)), lowRadius, 0, 2 * Math.PI
+        )
+
+        context.beginPath()
+        context.fillStyle = '#fff'
+        context.arc(
+            x + 2 * highRadius * (column + 1) + padding * (column + 1) + highRadius * Math.cos(angle * (column + 1)), 
+            y + 2 * highRadius * (row + 1) + padding * (row + 1) + highRadius * Math.sin(angle * (row + 1)), lowRadius / 1.5, 0, 2 * Math.PI
+        )
+        context.fill()
+        context.closePath()
+        
+        context.beginPath()
+        context.strokeStyle = '#fff'
+        context.globalAlpha = 0.50
+        context.lineWidth = 1
+        context.moveTo(x + curve.points[0].x, y + curve.points[0].y)
+        
+        for (let point of curve.points) {
+            context.lineTo(point.x + x, point.y + y)
+            context.moveTo(point.x + x, point.y + y)
+        }
+
+        context.stroke()
+        context.globalAlpha = 1.00
+        context.closePath()
+
+    }
+
+}
+
+function drawRows(row) {
+
+    context.beginPath()
+    context.strokeStyle = '#fff'
+    context.lineWidth = 1.0
+    context.arc(x, y + 2 * highRadius * (row + 1) + padding * (row + 1), highRadius, 0, 2 * Math.PI)
+    context.stroke()
+    context.closePath()
+    
+    context.beginPath()
+    context.fillStyle = '#fff'
+    context.arc(x + highRadius * Math.cos(angle * (row + 1)), y + 2 * highRadius * (row + 1) + padding * (row + 1) + highRadius * Math.sin(angle * (row + 1)), lowRadius, 0, 2 * Math.PI)
+    context.fill()
+    context.closePath()
+    
+    context.beginPath()
+    context.strokeStyle = 'rgba(255, 255, 255, 0.25)'
+    context.moveTo(0, y + 2 * highRadius * (row + 1) + padding * (row + 1) + highRadius * Math.sin(angle * (row + 1)))
+    context.lineTo(canvas.width, y + 2 * highRadius * (row + 1) + padding * (row + 1) + highRadius * Math.sin(angle * (row + 1)))
+    context.stroke()
+    context.closePath()
 
 }
 
