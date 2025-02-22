@@ -1,6 +1,4 @@
-import { Point } from './point.js'
-
-export class Curve {
+class Curve {
     
     constructor(length = 200) {
         this.points = new Array()
@@ -9,8 +7,9 @@ export class Curve {
 
     add(x, y) {
         this.points.unshift(new Point(x, y))
-        if (this.points.length == this.length)
+        if (this.points.length == this.length) {
             this.points.pop()
+        }
     }
 
 }
